@@ -53,20 +53,11 @@ getAgentKey = async({ site_cd, group_cd, agent_id }) => {
 
 };
 
-getAgentId = async({ site_cd, group_cd, agent_name }) => {
-
-    var agent_name_list = '';
-    var agent_name_query = '';
+getAgentId = async({ site_cd, group_cd }) => {
 
     var group_cd_list = '';
     var group_cd_query = '';
     
-    if (agent_name != '' && typeof agent_name != 'undefined') {
-        console.log('agent_name' + agent_name);
-        agent_name_list = `'` + agent_name.replace(/,/g, '\', \'') + `'`;
-        agent_name_query = `AND  C.AGENT_FIRST_NAME IN ( ${agent_name_list} )`
-    }
-
     if (group_cd != '' && typeof group_cd != 'undefined') {
         console.log('group_cd' + group_cd);
         group_cd_list = `'` + group_cd.replace(/,/g, '\', \'') + `'`;
@@ -87,7 +78,6 @@ getAgentId = async({ site_cd, group_cd, agent_name }) => {
             AND  T.END_TS IS NULL
             AND  C.AGENT_LAST_NAME = '${site_cd}'
             ${group_cd_query}
-            ${agent_name_query}
         -- ORDER BY  C.RESOURCE_NAME
     ) X
     ; `

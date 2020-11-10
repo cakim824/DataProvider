@@ -10,13 +10,11 @@ const read = async (req, res, next) => {
     try {
 
         const site_cd = req.params.site_cd;
-        const group_cd = '';
-        console.log('[group-code.controller] site_cd: ' + site_cd + ' // group_cd: ' + group_cd);
+        console.log('[group-code.controller] site_cd: ' + site_cd );
 
-        var group_infos;
-        group_infos = await getAgentGroupCode({ site_cd, group_cd });
-
+        var group_infos = await getAgentGroupCode( site_cd );
         console.log('[group-code.controller] group_cd: ' + JSON.stringify(group_infos));
+        
         res.status(200).json(group_infos);
     } catch (error) {
         console.log(error);
