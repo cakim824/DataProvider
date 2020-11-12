@@ -6,15 +6,15 @@
 
 const {
     getAgentCenterOutputs
-} = require('../../../../models/agent/agent-center-outputs');
+} = require('../../../models/agent/agent-center-outputs');
 
 const {
     getInteractionTypeKeys
-} = require('../../../../models/resource-keys/interaction-type-keys.js');
+} = require('../../../models/resource-keys/interaction-type-keys.js');
 
 const {
     getTenantKey
-} = require('../../../../models/resource-keys/tenant-keys.js');
+} = require('../../../models/resource-keys/tenant-keys.js');
 
 const {
     getResDataForNotMandatoryParam,
@@ -23,7 +23,7 @@ const {
     filterArgumentsIncludeKorean,
     filterArgumentsIncludeAlphabet,
 
-} = require('../../../../utils/common');
+} = require('../../../utils/common');
 
 const {
     pluck,

@@ -6,7 +6,7 @@
 
 const {
     getAgentGroupOutputs
-} = require('../../../../models/agent/agent-group-outputs');
+} = require('../../../models/agent/agent-group-outputs');
 
 const {
     pluck,
@@ -15,15 +15,15 @@ const {
 
 const {
   getInteractionTypeKeys
-} = require('../../../../models/resource-keys/interaction-type-keys.js');
+} = require('../../../models/resource-keys/interaction-type-keys.js');
 
 const {
   getTenantKey
-} = require('../../../../models/resource-keys/tenant-keys.js');
+} = require('../../../models/resource-keys/tenant-keys.js');
 
 const { 
   getAgentGroupKey
-} = require('../../../../models/resource-keys/group-resource-keys');
+} = require('../../../models/resource-keys/group-resource-keys');
 
 const {
   getResDataForNotMandatoryParam,
@@ -32,7 +32,7 @@ const {
   filterArgumentsIncludeAlphabet,
   filterArgumentsIncludeKorean,
   filterArgumentsCharacterList,
-} = require('../../../../utils/common');
+} = require('../../../utils/common');
 
 var isNotEmpty = value => value != "";
 

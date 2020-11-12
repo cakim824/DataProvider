@@ -1,5 +1,8 @@
 const router = require('express').Router();
+const stats = require('./stats');
+const infos = require('./infos');
 
-router.use('/v1', require('./v1'));
+router.use('/stats/v1', stats);
+router.use('/infos/v1', infos);
 
 module.exports = router;

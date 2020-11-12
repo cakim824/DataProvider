@@ -4,9 +4,9 @@
 //   sourcename: "agent-outputs.controller.js"
 // });
 
-const { filterArgumentsCharacterList } = require('../../../../utils/common');
+const { filterArgumentsCharacterList } = require('../../../utils/common');
 
-const { getAgentId } = require('../../../../models/resource-keys/agent-resource-keys.js');
+const { getAgentId } = require('../../../models/resource-keys/agent-resource-keys.js');
 
 
 const read = async (req, res, next) => {

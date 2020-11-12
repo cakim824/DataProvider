@@ -38,7 +38,7 @@ app.use(cors(corsOptions));
 
 
 
-app.use('/api', require('./routes/api'));
+app.use('', require('./routes/api'));
 
 app.use(function(err, req, res, next) {
     console.error(err.stack);

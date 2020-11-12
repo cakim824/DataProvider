@@ -4,7 +4,7 @@
 //   sourcename: "agent-outputs.controller.js"
 // });
 
-const { getAgentGroupCode } = require('../../../../models/resource-keys/group-resource-keys.js');
+const { getAgentGroupCode } = require('../../../models/resource-keys/group-resource-keys.js');
   
 const read = async (req, res, next) => {
     try {
