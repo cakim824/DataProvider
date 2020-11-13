@@ -6,24 +6,23 @@
 
 const {
     getAgentStateInfos
-} = require('../../../models/agent/agent-state-infos');
+} = require('../../../../models/agent/agent-state-infos');
 
 const {
-  getMediaTypeKeys,
-  getSiteMediaTypeKeys
-} = require('../../../models/resource-keys/media-type-keys.js');
+  getMediaTypeKeys
+} = require('../../../../models/resource-keys/media-type-keys.js');
 
 const {
   getTenantKey
-} = require('../../../models/resource-keys/tenant-keys.js');
+} = require('../../../../models/resource-keys/tenant-keys.js');
 
 const {
   getAgentKey,
-} = require('../../../models/resource-keys/agent-resource-keys.js');
+} = require('../../../../models/resource-keys/agent-resource-keys.js');
 
 const {
   getAgentGroupKey
-} = require('../../../models/resource-keys/group-resource-keys.js');
+} = require('../../../../models/resource-keys/group-resource-keys.js');
 
 const {
   getResDataForNotMandatoryParam,
@@ -32,7 +31,7 @@ const {
   filterArgumentsIncludeKorean,
   filterArgumentsIncludeAlphabet,
   filterArgumentsCharacterList,
-} = require('../../../utils/common');
+} = require('../../../../utils/common');
 
 
 var isNotEmpty = value => value != "";
@@ -123,7 +122,7 @@ const read = async (req, res, next) => {
     var agent_state_infos = await getAgentStateInfos({ date_unit, site_cd, tenant_key, group_key, agent_key, media_type_key, start_date, end_date, start_time, end_time });
     console.log('[agent-state-infos.controller] agent_state_infos: ' + JSON.stringify(agent_state_infos));
  
-    res.status(200).json({data: agent_state_infos});
+    res.status(200).json( agent_state_infos );
   } catch (error) {
     console.log(error);
     res.status(500).json({ errorCode: 500, errorMessage: '문제가 발생했습니다.' });

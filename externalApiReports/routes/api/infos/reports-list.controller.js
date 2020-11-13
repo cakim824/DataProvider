@@ -14,6 +14,16 @@ const reportsList = [
         "NUM": 3,
         "REPORTS_NAME": "상담그룹 실적 보고서",
         "REQUEST_URL_NAME": "agent-group-outputs"
+    },
+    {
+        "NUM": 4,
+        "REPORTS_NAME": "상담사 상태 실적 보고서",
+        "REQUEST_URL_NAME": "agent-state-infos"
+    },
+    {
+        "NUM": 5,
+        "REPORTS_NAME": "상담사 일별 로그인 실적 보고서",
+        "REQUEST_URL_NAME": "agent-daily-login-infos"
     }
 ];
 

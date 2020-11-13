@@ -36,7 +36,7 @@ const getAgentStateInfos = async ({ date_unit, tenant_key, site_cd, group_key, a
     var time_range_query = "";
 
     if (isNotEmpty(media_type_key)) {
-        media_type_query = ` AND A.MEDIA_TYPE_KEY IN ${media_type_key}`;
+        media_type_query = ` AND A.MEDIA_TYPE_KEY IN (${media_type_key})`;
     }
     if (isNotEmpty(group_key)) {
         agent_group_query = ` AND B.GROUP_KEY = ${group_key}`;
@@ -54,7 +54,8 @@ const getAgentStateInfos = async ({ date_unit, tenant_key, site_cd, group_key, a
     SET ARITHABORT OFF
     
     SELECT 
-            LEFT(Y.DT_KEY, 10) AS DATE_KEY 
+            ROW_NUMBER() OVER(ORDER BY Y.DT_KEY, Y.AGENT_NAME) AS NUM
+            , LEFT(Y.DT_KEY, 10) AS DATE_KEY 
             , (CASE WHEN LEN(Y.DT_KEY) = 16 THEN RIGHT(Y.DT_KEY, 5) ELSE '' END) AS TIME_KEY
             , Y.M_TYPE AS CHANNEL_TYPE
             , Y.AGENT_NAME, Y.ACTIVE_TIME, Y.READY_TIME, Y.BUSY_TIME, Y.NOT_READY_TIME, Y.WRAP_TIME
