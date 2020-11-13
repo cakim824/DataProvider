@@ -9,7 +9,7 @@ var config = require('./config/config');
 
 var app             = express();
 
-var PORT = process.env.PORT || 9001;
+var PORT = process.env.PORT || 31001;
 process.setMaxListeners(0); // 하나의 라우트에서 생성가능한 최대 PATH 수 제한 해제
 
 
