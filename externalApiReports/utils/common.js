@@ -40,7 +40,7 @@ const isEmpty = value => !value;
 const checkMadatoryParameter = (value, key) => {
   if (isEmpty(value)) {
     const notExistMandatoryParameterError = new Error(`${key} 값이 없습니다.`);
-    notExistMandatoryParameterError.code = '400';
+    notExistMandatoryParameterError.code = '418';
     throw notExistMandatoryParameterError;
   }
   return false;
@@ -85,6 +85,10 @@ const filterArgumentsIncludeKorean = (args) => {
   return args.replace(/[^가-힣a-zA-Z0-9:-_]/g , '');
 }
 
+const convertArgument = (args) => {
+  return args.replace(/[^가-힣a-zA-Z0-9]/g, '').toLowerCase();
+}
+
 
 module.exports = {
   getResDataForNotMandatoryParam,
@@ -95,6 +99,7 @@ module.exports = {
   filterArgumentsCharacterList,
   filterArgumentsIncludeAlphabet,
   filterArgumentsIncludeKorean,
+  convertArgument,
   promiseHandler,
   decodeError,
   responseError,

@@ -90,7 +90,7 @@ const read = async (req, res, next) => {
 
     if (!existMandatoryParam) {
       res
-        .status(400)
+        .status(418)
         .send(
           getResDataForNotMandatoryParam(mandatoryParamList, missingParamList)
         );

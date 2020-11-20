@@ -10,7 +10,6 @@ const {
 
 const {
   getMediaTypeKeys,
-  getSiteMediaTypeKeys
 } = require('../../../models/resource-keys/media-type-keys.js');
 
 const {
@@ -61,7 +60,7 @@ const read = async (req, res, next) => {
 
     if (!existMandatoryParam) {
       res
-        .status(400)
+        .status(418)
         .send(
           getResDataForNotMandatoryParam(mandatoryParamList, missingParamList)
         );
