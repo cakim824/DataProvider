@@ -137,8 +137,8 @@ const getAvg = (sorted_data, sum_data) => {
 
 const readDatasource = async({ site_cd, date_unit, start_date, end_date, start_time, end_time, enter_queue_key, consult_queue_key }) => {
   return Promise.all([
-    getSiteRepNumber({ site_cd, end_date, vq_key: enter_queue_key }),
-    getSiteServiceName({ site_cd, end_date, vq_key: consult_queue_key }),
+    getSiteRepNumber({ site_cd, apply_date: end_date }),
+    getSiteServiceName({ site_cd, apply_date: end_date }),
     ConsultConnectQueue.find({ site_cd, date_unit, start_date, end_date, start_time, end_time, consult_queue_key })
   ])
 };

@@ -58,31 +58,31 @@ getConsultQueueKeys = async({ site_cd, end_date }) => {
 };
 
 
-getSiteRepNumber =  async ( { site_cd, end_date, vq_key } ) => {
+getSiteRepNumber =  async ( { site_cd, apply_date } ) => {
     try {
+        console.log("[getSiteRepNumber] site_cd: " + site_cd + "\n    apply_date: " + apply_date);
 
-        console.log("[getSiteRepNumber] site_cd: " + site_cd + "\n    vq_key: " + vq_key);
-
-        var vq_key_query = "";
-        if (vq_key != '' && typeof vq_key != 'undefined') {
-            console.log('vq_key ' + vq_key);
-            vq_key_query = `AND A.VQ_KEY IN ( ${vq_key} ) `
+        var apply_date_query = ` AND APPLY_DATE <= DATE_FORMAT(NOW(), '%Y%m%d%H%i%s') `;
+        if (apply_date != '' && typeof apply_date != 'undefined') {
+            console.log('apply_date ' + apply_date);
+            apply_date_query = ` AND APPLY_DATE <= ${apply_date} ` 
         }
 
         var query = 
         `
-        SELECT  A.MAPPING_INDEX AS REP_INDEX, A.VQ_KEY, A.SERVICE_NAME AS REP_NUMBER
-                -- , (CASE WHEN A.PREV_MAPPING_INDEX IS NULL THEN A.SERVICE_NAME ELSE NULL END) AS REP_NUMBER
-                -- , (SELECT VQ_KEY FROM tb_rp_vq_mapping_log_detail WHERE MAPPING_INDEX = A.PREV_MAPPING_INDEX) as PREV_VQ_KEY
+        SELECT  ROW_NUMBER() OVER(ORDER BY REP_NUMBER) AS NUM
+                , A.SERVICE_NAME AS REP_NUMBER
+                , A.MAPPING_INDEX AS REP_INDEX, A.VQ_KEY
         FROM tb_rp_vq_mapping_log_detail A
         WHERE A.SITE_CD = ?
+            AND A.ROUTING_POINT_TYPE = '0001'
             AND A.INFOMART_MODE = '00001'
-            AND A.APPLY_DATE = (SELECT MAX(APPLY_DATE) FROM tb_rp_vq_mapping_log WHERE SITE_CD = ? AND APPLY_DATE <= ?)
-            ${vq_key_query}
+            AND A.APPLY_DATE = (SELECT MAX(APPLY_DATE) FROM tb_rp_vq_mapping_log WHERE SITE_CD = ? ${apply_date_query} )
+        ORDER BY NUM
         ; `
         ;
     
-        const params = [ site_cd, site_cd, end_date];
+        const params = [ site_cd, site_cd ];
         const rows = await sendPreparedStatementToPortalDB({ query, params });
         
         console.log("[getSiteRepNumber] query: " + query + "\n    rows: " + JSON.stringify(rows));
@@ -95,32 +95,42 @@ getSiteRepNumber =  async ( { site_cd, end_date, vq_key } ) => {
 };
 
 
-getSiteServiceName =  async ( { site_cd, end_date, vq_key } ) => {
+getSiteServiceName =  async ( { site_cd, apply_date, rep_number_index } ) => {
     try {
 
-        console.log("[getSiteServiceName] site_cd: " + site_cd + "\n    vq_key: " + vq_key);
+        console.log("[getSiteServiceName] site_cd: " + site_cd + "\n    apply_date: " + apply_date);
 
-        var vq_key_query = "";
-        if (vq_key != '' && typeof vq_key != 'undefined') {
-            console.log('vq_key ' + vq_key);
-            vq_key_query = `AND A.VQ_KEY IN ( ${vq_key} ) `
+        var apply_date_query = ` AND APPLY_DATE <= DATE_FORMAT(NOW(), '%Y%m%d%H%i%s') `;
+        if (apply_date != '' && typeof apply_date != 'undefined') {
+            console.log('apply_date ' + apply_date);
+            apply_date_query = ` AND APPLY_DATE <= ${apply_date} ` 
+        }
+
+        var prev_mapping_query = "";
+        if (rep_number_index != '' && typeof rep_number_index != 'undefined') {
+            console.log('rep_number_index ' + rep_number_index);
+            prev_mapping_query = `AND A.PREV_MAPPING_INDEX = ${rep_number_index} `
         }
 
         var query = 
         `
-        SELECT  A.MAPPING_INDEX AS SERVICE_INDEX, A.VQ_KEY
+        SELECT  ROW_NUMBER() OVER(ORDER BY REP_NUMBER, SERVICE_NAME) AS NUM
+                , (SELECT SERVICE_NAME FROM tb_rp_vq_mapping_log_detail WHERE MAPPING_INDEX = A.PREV_MAPPING_INDEX) as REP_NUMBER
                 , (CASE WHEN A.PREV_MAPPING_INDEX IS NULL THEN NULL ELSE A.SERVICE_NAME END) AS SERVICE_NAME
+                , A.MAPPING_INDEX AS SERVICE_INDEX, A.VQ_KEY
                 , A.PREV_MAPPING_INDEX AS REP_INDEX
                 , (SELECT VQ_KEY FROM tb_rp_vq_mapping_log_detail WHERE MAPPING_INDEX = A.PREV_MAPPING_INDEX) as PREV_VQ_KEY
         FROM tb_rp_vq_mapping_log_detail A
         WHERE A.SITE_CD = ?
+        AND A.ROUTING_POINT_TYPE = '0002'
             AND A.INFOMART_MODE = '00001'
-            AND A.APPLY_DATE = (SELECT MAX(APPLY_DATE) FROM tb_rp_vq_mapping_log WHERE SITE_CD = ? AND APPLY_DATE <= ?)
-            ${vq_key_query}
+            AND A.APPLY_DATE = (SELECT MAX(APPLY_DATE) FROM tb_rp_vq_mapping_log WHERE SITE_CD = ? ${apply_date_query} )
+            ${prev_mapping_query}
+        ORDER BY NUM
         ; `
         ;
     
-        const params = [ site_cd, site_cd, end_date];
+        const params = [ site_cd, site_cd ];
         const rows = await sendPreparedStatementToPortalDB({ query, params });
         
         console.log("[getSiteServiceName] query: " + query + "\n    rows: " + JSON.stringify(rows));

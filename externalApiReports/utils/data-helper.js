@@ -9,6 +9,10 @@ const {
     filter,
   } = require("ramda");
   
+  
+  const convertArgument = (args) => {
+    return args.replace(/[^가-힣a-zA-Z0-9]/g, '').toLowerCase();
+  }
 
   const joinRight = curry((mapper1, mapper2, t1, t2) => {
     let indexed = indexBy(mapper1, t1);
@@ -74,6 +78,19 @@ const fulfillServiceReqData = function (data) {
   return fulfilled_data;
 };
   
+
+const getMappingIndex = async ({ data, service_name }) => {
+
+  console.log("rep_number_data : " + JSON.stringify(data));
+  var mapping_index;
+  for(var i=0; i<length(data); i++) {
+    if(data[i].REP_NUMBER && convertArgument(data[i].REP_NUMBER)  == service_name) mapping_index = data[i].REP_INDEX
+    if(data[i].SERVICE_NAME && convertArgument(data[i].SERVICE_NAME)  == service_name) mapping_index = data[i].SERVICE_INDEX
+  }
+
+  return mapping_index;
+}
+
   module.exports = {
     addMetaData,
     filterByRepNumber,
@@ -83,6 +100,7 @@ const fulfillServiceReqData = function (data) {
     fulfillServiceReqData,
     leftJoinOnVqKey,
     leftJoinOnPrevMappingIndex,
-    leftJoinOnDTKeyAndPrevMappingIndex
+    leftJoinOnDTKeyAndPrevMappingIndex,
+    getMappingIndex
   };
   
