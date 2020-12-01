@@ -1,41 +1,57 @@
 // var logger = require('../../../utils/logger')({ dirname: '', filename: '', sourcename: 'interaction-types.controller.js' });
 const { sendPreparedStatementToInfomart } = require("../../utils/mssql");
 const { sendPreparedStatementToPortalDB } = require('../../utils/mariadb');
+const { getTimestamp } = require('../../utils/date');
 
-getMediaTypeKeys = async({ site_cd, media_type }) => {
-    
-    var media_type_query = "";
-    if (media_type != '' && typeof media_type != 'undefined') {
-        console.log('media_type ' + media_type);
-        media_type_list = `'` + media_type.replace(/,/g, '\', \'') + `'`;
-        media_type_query = `AND  B.MEDIA_TYPE_NM IN ( ${media_type_list} )`
+const DATE_UNITS = {
+    hourly: {
+        date_type: "CHAR(16)",
+        main_view_name: "AGT_I_STATE_RSN_HOUR"
+    },
+    daily: {
+        date_type: "CHAR(10)",
+        main_view_name: "AGT_I_STATE_RSN_DAY"
+    },
+    monthly: {
+        date_type: "CHAR(7)",
+        main_view_name: "AGT_I_STATE_RSN_MONTH"
     }
+};
+
+const getViewName = date_unit => DATE_UNITS[date_unit].main_view_name;
+
+getStateReasonKeys = async({ date_unit, site_cd, tenant_key, start_date, end_date }) => {
+    
+    const main_view_name = getViewName(date_unit);
+    const start_timestamp = getTimestamp(start_date); 
+    const end_timestamp = getTimestamp(end_date) + 85500;
+    console.log('end_timestamp: ', end_timestamp, 'start_timestamp: ', start_timestamp);
 
     var query =
     `
-    SELECT  B.MEDIA_TYPE_CD as MEDIA_TYPE_KEY
-            , B.MEDIA_TYPE_NM as MEDIA_TYPE_NAME
-            , B.THIRD_PARTY_MEDIA_YN
-    FROM    tb_site_media_type A
-            INNER JOIN tb_media_type B ON (A.MEDIA_TYPE_CD = B.MEDIA_TYPE_CD AND A.THIRD_PARTY_MEDIA_YN = B.THIRD_PARTY_MEDIA_YN)
-    WHERE   A.SITE_CD = '${site_cd}'
-    ${media_type_query}
+    SELECT DISTINCT(AC.NAME)
+    FROM ${main_view_name} R, RESOURCE_STATE RST, RESOURCE_STATE_REASON RSR, GIDB_GC_ACTION_CODE AC
+    WHERE R.TENANT_KEY = ${tenant_key}
+        AND R.DATE_TIME_KEY BETWEEN ${start_timestamp} AND ${end_timestamp}
+        AND R.RESOURCE_KEY in (select resource_key from resource_ where resource_type='Agent' and agent_last_name = '${site_cd}')
+        AND RST.RESOURCE_STATE_KEY = 13
+        AND R.RESOURCE_STATE_REASON_KEY = RSR.RESOURCE_STATE_REASON_KEY
+        AND RSR.SOFTWARE_REASON_KEY = 'ReasonCode'
+        AND AC.TENANTID = R.TENANT_KEY
+        AND AC.CODE = RSR.SOFTWARE_REASON_VALUE
     ;`
     ;
 
-    console.log(`[get][getMediaTypeKeys]: query = ` + query);
-  
-    const rows = await sendPreparedStatementToPortalDB({query});
+    const rows = await sendPreparedStatementToInfomart(query);
+    console.log(`[getStateReasonKeys]: query = ` + query + "\n    rows: " + JSON.stringify(rows));
 
-    var media_type_keys = "";
-    for(var i=0;  rows[i]; i++) {
-      if(i==0) media_type_keys = media_type_keys + rows[i].MEDIA_TYPE_KEY;	
-      else media_type_keys = media_type_keys + `, ` + rows[i].MEDIA_TYPE_KEY	
-    }	 
+    var state_reason_keys = [];
+    if (rows) {
+        for(var i=0; rows[i]; i++) state_reason_keys.push(rows[i].NAME);
+    }
 
-    console.log("[media-types]" + media_type + " media_type_keys: " + media_type_keys);
-    return media_type_keys;
-
+    console.log("[getStateReasonKeys]state_reason_keys: " + state_reason_keys);
+    return state_reason_keys;
 };
 
 getSiteReasonCodes = async(site_cd) => {
@@ -61,6 +77,6 @@ getSiteReasonCodes = async(site_cd) => {
 };
 
 module.exports = {
-    getMediaTypeKeys,
+    getStateReasonKeys,
     getSiteReasonCodes
 }
