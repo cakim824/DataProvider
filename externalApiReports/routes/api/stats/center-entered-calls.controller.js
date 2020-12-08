@@ -273,11 +273,6 @@ const read = async (req, res, next) => {
 
     const consult_queue_n_enter_queue = await leftJoinOnDTKeyAndPrevMappingIndex(enter_queue_data_n_info, consult_queue_data_n_info);
     console.log('[consult-connected-calls.controller] consult_queue_n_enter_queue: ' + JSON.stringify(consult_queue_n_enter_queue));
-
-    const sum_data = getSum(consult_queue_n_enter_queue);
-    console.log('[consult-connected-calls.controller] sum_data: ' + JSON.stringify(sum_data));
-    // const avg_data = getAvg(consult_queue_n_enter_queue, sum_data);
-    // console.log('[consult-connected-calls.controller] avg_data: ' + JSON.stringify(avg_data));
     
     const fulfilled_data = fulfillServiceReqData(consult_queue_n_enter_queue);
     console.log('[consult-connected-calls.controller] fulfilled_data: ' + JSON.stringify(fulfilled_data));
@@ -288,6 +283,11 @@ const read = async (req, res, next) => {
 
     const final_data = omitColumn(filtered_data);
     console.log('[consult-connected-calls.controller] final_data: ' + JSON.stringify(final_data));  
+
+    const sum_data = getSum(filtered_data);
+    console.log('[consult-connected-calls.controller] sum_data: ' + JSON.stringify(sum_data));
+    // const avg_data = getAvg(consult_queue_n_enter_queue, sum_data);
+    // console.log('[consult-connected-calls.controller] avg_data: ' + JSON.stringify(avg_data));
 
     res.status(200).json({ data: final_data, sum: sum_data });
   } catch (error) {
