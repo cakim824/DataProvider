@@ -32,7 +32,7 @@ const getAgentNotReadyInfos = async ({ date_unit, tenant_key, site_cd, group_key
 
     var media_type_query = "";
     var agent_group_query = "";
-    var agent_id_query = `AND R.RESOURCE_KEY IN (SELECT RESOURCE_KEY FROM RESOURCE_ WHERE RESOURCE_TYPE = 'Agent' AND AGENT_LAST_NAME = '${site_cd}')`;
+    var agent_id_query = "";
     var time_range_query = "";
 
     if (isNotEmpty(media_type_key)) {
@@ -45,7 +45,7 @@ const getAgentNotReadyInfos = async ({ date_unit, tenant_key, site_cd, group_key
         agent_id_query = ` AND R.RESOURCE_KEY IN ( ${agent_key} )`;
     }
     if ( date_unit == "hourly" && isNotEmpty(start_time) ) {
-        time_range_query = ` AND RIGHT(X.DATE_TIME_KEY, 5) BETWEEN '${start_time}' AND '${end_time}'`;
+        time_range_query = ` AND RIGHT(X.DT_KEY, 5) BETWEEN '${start_time}' AND '${end_time}'`;
     }
 
   
@@ -71,7 +71,7 @@ const getAgentNotReadyInfos = async ({ date_unit, tenant_key, site_cd, group_key
             AND RSR.SOFTWARE_REASON_KEY = 'ReasonCode'
             AND AC.TENANTID = R.TENANT_KEY
             AND AC.CODE = RSR.SOFTWARE_REASON_VALUE
-            -- AND R.RESOURCE_KEY IN (SELECT RESOURCE_KEY FROM RESOURCE_ WHERE RESOURCE_TYPE = 'Agent' AND AGENT_LAST_NAME = '${site_cd}')
+            AND R.RESOURCE_KEY IN (SELECT RESOURCE_KEY FROM RESOURCE_ WHERE RESOURCE_TYPE = 'Agent' AND AGENT_LAST_NAME = '${site_cd}')
             ${agent_group_query}
             ${agent_id_query}
     ) X

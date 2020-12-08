@@ -41,10 +41,11 @@ getAgentKey = async({ site_cd, group_cd, agent_id }) => {
     const rows = await sendPreparedStatementToInfomart(query);
 
     // var agentKey = rows;
-    agent_key = ``
+    var agent_key = `-99`
     for (var i = 0; rows[i]; i++) {
-        if (i == 0) agent_key = agent_key + rows[i].AGENT_KEY;
-        else agent_key = agent_key + `, ` + rows[i].AGENT_KEY;
+        // if (i == 0) agent_key = agent_key + rows[i].AGENT_KEY;
+        // else agent_key = agent_key + `, ` + rows[i].AGENT_KEY;
+        agent_key = agent_key + `, ` + rows[i].AGENT_KEY;
     }
 
     // var agent_key = rows[0].AGENT_KEY;
