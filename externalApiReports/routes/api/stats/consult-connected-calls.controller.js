@@ -175,11 +175,16 @@ const read = async (req, res, next) => {
       return;
     }
 
-    var start_date = filterArgumentsNumber(param.startdate);
-    var end_date = filterArgumentsNumber(param.enddate);
+    var start_date = filterArgumentsNumber(param.startdate).substring(0,8);
+    var end_date = filterArgumentsNumber(param.enddate).substring(0,8);
     if(date_unit == 'monthly') {
-      start_date = filterArgumentsNumber(param.startdate).substring(0,6);
-      end_date = filterArgumentsNumber(param.enddate).substring(0,6);
+      start_date = filterArgumentsNumber(param.startdate).substring(0,6) + '01';
+      end_date = filterArgumentsNumber(param.enddate).substring(0,6) + '31';
+    }
+
+    if (length(start_date) != 8 || length(end_date) != 8) {
+      res.status(418).send("Wrong Date Format");
+      return;
     }
 
     var start_time = '';

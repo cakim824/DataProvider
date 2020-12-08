@@ -19,12 +19,14 @@ getEnterQueueKeys = async({ site_cd, end_date }) => {
   
     const rows = await sendPreparedStatementToPortalDB({query});
 
-    var enter_queue_keys = "";
+    var enter_queue_keys = `-55`;
     for(var i=0;  rows[i]; i++) {
-      if(i==0) enter_queue_keys = enter_queue_keys + rows[i].ENTER_QUEUE_KEY;	
-      else enter_queue_keys = enter_queue_keys + `, ` + rows[i].ENTER_QUEUE_KEY	
+    //   if(i==0) enter_queue_keys = enter_queue_keys + rows[i].ENTER_QUEUE_KEY;	
+    //   else enter_queue_keys = enter_queue_keys + `, ` + rows[i].ENTER_QUEUE_KEY;
+    enter_queue_keys = enter_queue_keys + `, ` + rows[i].ENTER_QUEUE_KEY;
     }	 
 
+    console.log("[getEnterQueueKeys]: rows = " + JSON.stringify(rows));
     console.log("[getEnterQueueKeys]: results = " + enter_queue_keys);
     return enter_queue_keys;
 
@@ -47,10 +49,11 @@ getConsultQueueKeys = async({ site_cd, end_date }) => {
   
     const rows = await sendPreparedStatementToPortalDB({query});
 
-    var consult_queue_keys = "";
+    var consult_queue_keys = `-55`;
     for(var i=0;  rows[i]; i++) {
-      if(i==0) consult_queue_keys = consult_queue_keys + rows[i].CONSULT_QUEUE_KEY;	
-      else consult_queue_keys = consult_queue_keys + `, ` + rows[i].CONSULT_QUEUE_KEY	
+    //   if(i==0) consult_queue_keys = consult_queue_keys + rows[i].CONSULT_QUEUE_KEY;	
+    //   else consult_queue_keys = consult_queue_keys + `, ` + rows[i].CONSULT_QUEUE_KEY;	
+      consult_queue_keys = consult_queue_keys + `, ` + rows[i].CONSULT_QUEUE_KEY;	
     }	 
 
     console.log("[getConsultQueueKeys]: results = " + consult_queue_keys);
